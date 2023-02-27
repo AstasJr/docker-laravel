@@ -5,20 +5,18 @@ services:
       context: .
       dockerfile: ./docker/php/Dockerfile
     image: php:8.1.12-fpm
-    container_name: php
     restart: unless-stopped
     tty: true
     environment:
-      SERVICE_NAME: app
-      SERVICE_TAGS: dev
+        PHP_IDE_CONFIG: "serverName=docker-laravel"
     working_dir: /var/www
     volumes:
       - ./:/var/www
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini
       - ./storage/:${PROJECT_PATH}/storage/
+      - ./docker/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
   webserver:
     image: nginx:alpine
-    container_name: nginx
     restart: unless-stopped
     tty: true
     ports:
@@ -42,7 +40,6 @@ services:
           - ./docker/mysql/data:/var/lib/mysql
   phpmyadmin:
       image: phpmyadmin/phpmyadmin
-      container_name: phpmyadmin
       environment:
           PMA_HOST: ${DB_HOST}
           PMA_PORT: ${DB_PORT}
